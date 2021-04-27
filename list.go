@@ -17,20 +17,25 @@ func NewList(value interface{}) *List {
 	}
 }
 
-func (l *List) Head() interface{} {
-	return l.list.FirstElement.Value
+func (l *List) Head() (interface{}, error) {
+	if l.list.listIsEmpty() {
+		return nil, ErrListIsEmpty
+	}
+	return l.list.FirstElement.Value, nil
 }
 
-func (l *List) Tail() interface{} {
-	tail := l.list.FirstElement
-	for {
-		if tail.NextElement == nil {
-			break
-		}
-		tail = tail.NextElement
+func (l *List) Tail() (interface{}, error) {
+	// tail := l.list.FirstElement
+	// for {
+	// 	if tail.NextElement == nil {
+	// 		break
+	// 	}
+	// 	tail = tail.NextElement
+	// }
+	if l.list.listIsEmpty() {
+		return nil, ErrListIsEmpty
 	}
-
-	return tail.Value
+	return l.list.LastElement.Value, nil
 }
 
 func (l *List) Add(value interface{}) {
@@ -42,13 +47,45 @@ func (l *List) Add(value interface{}) {
 	l.list.add(element)
 }
 
+func (l *List) RemoveHead() error {
+	return l.list.removeHead()
+}
+
+func (l *List) RemoveTail() error {
+	return l.list.removeTail()
+}
+
+func (l *List) RemoveByOrderInList(order int64) error {
+	if order < 0 {
+		return ErrNegativeOrder
+	}
+	if l.list.listIsEmpty() {
+		return ErrListIsEmpty
+	}
+	if l.list.size() < order+1 {
+		return ErrOrderOutOfSize
+	}
+
+	element := l.list.FirstElement
+	var i int64
+	for {
+		if i == order {
+			return l.list.remove(element)
+		}
+		element = element.NextElement
+		i++
+	}
+}
+
 type list struct {
 	FirstElement *element
+	LastElement  *element
 }
 
 func newList(element *element) *list {
 	return &list{
 		FirstElement: element,
+		LastElement:  element,
 	}
 }
 
@@ -56,6 +93,7 @@ func (l *list) listIsEmpty() bool {
 	if l == nil {
 		return true
 	}
+
 	return l.FirstElement == nil
 }
 
@@ -73,79 +111,59 @@ func (l *list) size() int64 {
 }
 
 func (l *list) add(newElement *element) {
-	if l.size() == 0 {
+	if l.listIsEmpty() {
 		l.FirstElement = newElement
+		l.LastElement = newElement
 		return
 	}
-	element := l.FirstElement
 
-	for {
-		if element.NextElement == nil {
-			element.NextElement = newElement
-			break
-		}
-		element = element.NextElement
+	newElement.PreviousElement = l.LastElement
+	l.LastElement.NextElement = newElement
+	l.LastElement = newElement
+}
+
+func (l *list) removeHead() error {
+	if l.listIsEmpty() {
+		return ErrListIsEmpty
 	}
-	element.NextElement = newElement
+	headToRemove := l.FirstElement
+	l.FirstElement = headToRemove.NextElement
+	headToRemove = nil
+	return nil
+}
+
+func (l *list) removeTail() error {
+	if l.listIsEmpty() {
+		return ErrListIsEmpty
+	}
+	tailToRemove := l.LastElement
+	if tailToRemove.PreviousElement == nil {
+		l.FirstElement = nil
+		tailToRemove = nil
+		return nil
+	}
+	tailToRemove.PreviousElement.NextElement = nil
+	l.LastElement = tailToRemove.PreviousElement
+	tailToRemove = nil
+	return nil
 }
 
 func (l *list) remove(elementToRemove *element) error {
-	if l.listIsEmpty() {
-		return fmt.Errorf("Error: List is empty")
-	}
-
 	if elementToRemove == l.FirstElement {
-		l.FirstElement = l.FirstElement.NextElement
-		return nil
+		return l.removeHead()
+	}
+	if elementToRemove == l.LastElement {
+		return l.removeTail()
 	}
 
-	element := l.FirstElement
-	for {
-		if element.NextElement == elementToRemove {
-			element.NextElement = elementToRemove.NextElement
-			elementToRemove = nil
-			return nil
-		}
-		element = element.NextElement
-		if element == elementToRemove {
-			element.NextElement = elementToRemove.NextElement
-			elementToRemove = nil
-			return nil
-		}
-		if element.NextElement == nil {
-			return fmt.Errorf("List does not containt element to be removed")
-		}
-	}
-}
-
-func (l *List) RemoveByOrderNo(order int64) error {
-	if order < 0 {
-		return fmt.Errorf("Error: element order can not be negative integer")
-	}
-	if l.list.listIsEmpty() {
-		return fmt.Errorf("Error: List is empty")
-	}
-
-	size := l.list.size()
-	if size < order+1 {
-		return fmt.Errorf("Error: Element's order %d out of the list size %d", order, size)
-	}
-
-	element := l.list.FirstElement
-	var i int64
-	for {
-		if i == order {
-			l.list.remove(element)
-			return nil
-		}
-		element = element.NextElement
-		i++
-	}
+	elementToRemove.PreviousElement.NextElement = elementToRemove.NextElement
+	return nil
 }
 
 type element struct {
-	Value       interface{}
-	NextElement *element
+	Value           interface{}
+	PreviousElement *element
+	NextElement     *element
 }
 
 func newElement(value interface{}) *element {
@@ -155,40 +173,3 @@ func newElement(value interface{}) *element {
 func (t *element) PrintElement() {
 	fmt.Println(t.Value)
 }
-
-// func main() {
-// 	jedan := &Element{
-// 		Value: "jedan",
-// 	}
-// 	list := NewList(jedan)
-// 	list.PrintList()
-// 	fmt.Println("velicina", list.Size())
-
-// 	dva := &Element{
-// 		Value: "dva",
-// 	}
-// 	list.Add(dva)
-
-// 	tri := &Element{
-// 		Value: "tri",
-// 	}
-// 	list.Add(tri)
-
-// 	list.PrintList()
-// 	fmt.Println("velicina", list.Size())
-
-// 	//tail := list.Tail()
-
-// 	// err := list.Remove(dva)
-// 	// if err != nil {
-// 	// 	fmt.Println(err)
-// 	// 	return
-// 	// }
-// 	err := list.RemoveByOrderNo(0)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return
-// 	}
-// 	list.PrintList()
-// 	fmt.Println("velicina", list.Size())
-// }
