@@ -1,7 +1,6 @@
-package list
+package linkedList
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -180,8 +179,4 @@ type element struct {
 
 func newElement(value interface{}) *element {
 	return &element{Value: value}
-}
-
-func (t *element) PrintElement() {
-	fmt.Println(t.Value)
 }
