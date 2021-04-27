@@ -19,18 +19,18 @@ func NewList(value interface{}) *List {
 	}
 }
 
-func (l *List) Head() (interface{}, error) {
+func (l *List) Head() interface{} {
 	if l.list.listIsEmpty() {
-		return nil, ErrListIsEmpty
+		return nil
 	}
-	return l.list.FirstElement.Value, nil
+	return l.list.FirstElement.Value
 }
 
-func (l *List) Tail() (interface{}, error) {
+func (l *List) Tail() interface{} {
 	if l.list.listIsEmpty() {
-		return nil, ErrListIsEmpty
+		return nil
 	}
-	return l.list.LastElement.Value, nil
+	return l.list.LastElement.Value
 }
 
 func (l *List) Add(value interface{}) {
@@ -48,6 +48,10 @@ func (l *List) RemoveHead() error {
 
 func (l *List) RemoveTail() error {
 	return l.list.removeTail()
+}
+
+func (l *List) ListIsEmpty() bool {
+	return l.list.listIsEmpty()
 }
 
 func (l *List) RemoveByOrderInList(order int64) error {
