@@ -1,6 +1,9 @@
 package list
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type List struct {
 	list *list
@@ -25,13 +28,6 @@ func (l *List) Head() (interface{}, error) {
 }
 
 func (l *List) Tail() (interface{}, error) {
-	// tail := l.list.FirstElement
-	// for {
-	// 	if tail.NextElement == nil {
-	// 		break
-	// 	}
-	// 	tail = tail.NextElement
-	// }
 	if l.list.listIsEmpty() {
 		return nil, ErrListIsEmpty
 	}
@@ -80,6 +76,7 @@ func (l *List) RemoveByOrderInList(order int64) error {
 type list struct {
 	FirstElement *element
 	LastElement  *element
+	mu           sync.Mutex
 }
 
 func newList(element *element) *list {
@@ -99,10 +96,11 @@ func (l *list) listIsEmpty() bool {
 
 func (l *list) size() int64 {
 	var size int64
-
+	l.mu.Lock()
 	element := l.FirstElement
 	for {
 		if element == nil {
+			l.mu.Unlock()
 			return size
 		}
 		size++
@@ -111,52 +109,66 @@ func (l *list) size() int64 {
 }
 
 func (l *list) add(newElement *element) {
+	l.mu.Lock()
 	if l.listIsEmpty() {
 		l.FirstElement = newElement
 		l.LastElement = newElement
+		l.mu.Unlock()
 		return
 	}
 
 	newElement.PreviousElement = l.LastElement
 	l.LastElement.NextElement = newElement
 	l.LastElement = newElement
+	l.mu.Unlock()
 }
 
 func (l *list) removeHead() error {
+	l.mu.Lock()
 	if l.listIsEmpty() {
+		l.mu.Unlock()
 		return ErrListIsEmpty
 	}
 	headToRemove := l.FirstElement
 	l.FirstElement = headToRemove.NextElement
 	headToRemove = nil
+	l.mu.Unlock()
 	return nil
 }
 
 func (l *list) removeTail() error {
+	l.mu.Lock()
 	if l.listIsEmpty() {
+		l.mu.Unlock()
 		return ErrListIsEmpty
 	}
 	tailToRemove := l.LastElement
 	if tailToRemove.PreviousElement == nil {
 		l.FirstElement = nil
 		tailToRemove = nil
+		l.mu.Unlock()
 		return nil
 	}
 	tailToRemove.PreviousElement.NextElement = nil
 	l.LastElement = tailToRemove.PreviousElement
 	tailToRemove = nil
+	l.mu.Unlock()
 	return nil
 }
 
 func (l *list) remove(elementToRemove *element) error {
+	l.mu.Lock()
 	if elementToRemove == l.FirstElement {
+		l.mu.Unlock()
 		return l.removeHead()
 	}
 	if elementToRemove == l.LastElement {
+		l.mu.Unlock()
 		return l.removeTail()
 	}
 
 	elementToRemove.PreviousElement.NextElement = elementToRemove.NextElement
+	l.mu.Unlock()
 	return nil
 }
 

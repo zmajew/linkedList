@@ -118,13 +118,16 @@ func TestAdd(t *testing.T) {
 func TestRemoveTail(t *testing.T) {
 	log.Println("Test RemoveTail running")
 
+	// Test on empty list
 	emptyList := &List{}
 	_, err := emptyList.Tail()
 	if err != ErrListIsEmpty {
 		t.Fail()
 	}
 
+	// Test on three element list
 	list := createThreeElementTestList()
+	// 1. Remove tail
 	err = list.RemoveTail()
 	if err != nil {
 		log.Println(err)
@@ -140,7 +143,7 @@ func TestRemoveTail(t *testing.T) {
 	if tail != testValueTwo {
 		t.Fail()
 	}
-
+	// 2. Remove tail second time
 	err = list.RemoveTail()
 	if err != nil {
 		log.Println(err)
@@ -151,17 +154,17 @@ func TestRemoveTail(t *testing.T) {
 	if tail2 != testValueOne {
 		t.Fail()
 	}
-
+	// 3. Remove tail third time
 	err = list.RemoveTail()
 	if err != nil {
 		log.Println(err)
 		t.Fail()
 	}
+	// Head and tail should be empty
 	headShouldBeEmpty, err := list.Head()
 	if err != ErrListIsEmpty {
 		t.Fail()
 	}
-
 	if headShouldBeEmpty != nil {
 		t.Fail()
 	}
@@ -176,14 +179,15 @@ func TestRemoveTail(t *testing.T) {
 
 func TestRemoveHead(t *testing.T) {
 	log.Println("Test RemoveHead running")
-
+	// Testing on the empty list
 	emptyList := &List{}
 	_, err := emptyList.Head()
 	if err.Error() != ErrListIsEmpty.Error() {
 		t.Fail()
 	}
-
+	// Testing on the three element list
 	list := createThreeElementTestList()
+	// 1. Remove head
 	err = list.RemoveHead()
 	if err != nil {
 		log.Println(err)
@@ -199,7 +203,7 @@ func TestRemoveHead(t *testing.T) {
 	if head != testValueTwo {
 		t.Fail()
 	}
-
+	// 2. Remove head second time
 	err = list.RemoveHead()
 	if err != nil {
 		log.Println(err)
@@ -210,15 +214,14 @@ func TestRemoveHead(t *testing.T) {
 	if head2 != testValueThree {
 		t.Fail()
 	}
-
+	// Remove head thir time
 	err = list.RemoveHead()
 	if err != nil {
 		log.Println(err)
 		t.Fail()
 	}
-
+	// Head and tail should be empty
 	headShouldBeEmpty, err := list.Head()
-	//head3, _ := headValueInterface3.(string)
 	if err.Error() != ErrListIsEmpty.Error() {
 		t.Fail()
 	}
@@ -226,7 +229,6 @@ func TestRemoveHead(t *testing.T) {
 		t.Fail()
 	}
 	tailShouldBeEmpty, err := list.Tail()
-	//head3, _ := headValueInterface3.(string)
 	if err.Error() != ErrListIsEmpty.Error() {
 		t.Fail()
 	}
@@ -237,13 +239,14 @@ func TestRemoveHead(t *testing.T) {
 
 func TestRemoveByOrderInList(t *testing.T) {
 	log.Println("Test RemoveByOrderNo running")
+	// Creating three element list
 	list1 := createThreeElementTestList()
+	// removing first element of the list
 	err := list1.RemoveByOrderInList(0)
 	if err != nil {
 		log.Println(err)
 		t.Fail()
 	}
-
 	headValueInterfaceList1, err := list1.Head()
 	if err != nil {
 		log.Println(err)
@@ -254,7 +257,9 @@ func TestRemoveByOrderInList(t *testing.T) {
 		t.Fail()
 	}
 
+	// Creating new three element list
 	list2 := createThreeElementTestList()
+	// removing second element of the list
 	err = list2.RemoveByOrderInList(1)
 	if err != nil {
 		log.Println(err)
@@ -278,7 +283,7 @@ func TestRemoveByOrderInList(t *testing.T) {
 	if tailOfList2 != testValueThree {
 		t.Fail()
 	}
-
+	// Testing of removing the third element on new list
 	list3 := createThreeElementTestList()
 	err = list3.RemoveByOrderInList(2)
 	if err != nil {
