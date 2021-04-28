@@ -1,9 +1,12 @@
 package linkedList
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/zmajew/linkedList"
 )
 
 var (
@@ -12,6 +15,66 @@ var (
 	testValueThree string = "three"
 )
 
+// Queue example
+type Queue interface {
+	GetHead() (interface{}, error)
+	Add(value interface{})
+	Size() int64
+}
+
+func NewQueue() Queue {
+	return linkedList.NewList()
+}
+
+func ExampleQueue() {
+	// Inicialse queue
+	q := NewQueue()
+	// Add two element on the queue
+	q.Add("first element")
+	q.Add("second element")
+
+	//Get and remove head
+	element1Interface, err := q.GetHead()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	element1Value, _ := element1Interface.(string)
+	fmt.Println(element1Value)
+	// Add new element
+	q.Add("third element")
+
+	element2Interface, err := q.GetHead()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	element2Value, _ := element2Interface.(string)
+	fmt.Println(element2Value)
+
+	fmt.Println(q.Size())
+
+	element3Interface, err := q.GetHead()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	element3Value, _ := element3Interface.(string)
+	fmt.Println(element3Value)
+
+	_, err = q.GetHead()
+	fmt.Println(err == linkedList.ErrListIsEmpty)
+	fmt.Println(q.Size())
+	// Output:
+	// first element
+	// second element
+	// 1
+	// third element
+	// true
+	// 0
+}
+
+//Test
 func TestMain(m *testing.M) {
 	exitVal := m.Run()
 
