@@ -18,6 +18,7 @@ func NewList() *List {
 	}
 }
 
+// Returns head element value of the list
 func (l *List) Head() interface{} {
 	if l.list.listIsEmpty() {
 		return nil
@@ -25,11 +26,22 @@ func (l *List) Head() interface{} {
 	return l.list.FirstElement.Value
 }
 
+// Returns and removes head element value of the list
+func (l *List) GetHead() (interface{}, error) {
+	return l.Head(), l.list.removeHead()
+}
+
+// Returns tail element value of the list
 func (l *List) Tail() interface{} {
 	if l.list.listIsEmpty() {
 		return nil
 	}
 	return l.list.LastElement.Value
+}
+
+// Returns and removes tail element value of the list
+func (l *List) GetTail() (interface{}, error) {
+	return l.Tail(), l.list.removeTail()
 }
 
 func (l *List) Add(value interface{}) {

@@ -59,6 +59,26 @@ func TestHead(t *testing.T) {
 	}
 }
 
+func TestGetHead(t *testing.T) {
+	log.Println("Test GetHead running")
+
+	list1 := createThreeElementTestList()
+
+	headValueInteface, err := list1.GetHead()
+	if err != nil {
+		t.Fail()
+	}
+	headValue, _ := headValueInteface.(string)
+	if headValue != testValueOne {
+		t.Fail()
+	}
+
+	newHeadValue, _ := list1.Head().(string)
+	if newHeadValue != testValueTwo {
+		t.Fail()
+	}
+}
+
 func TestTail(t *testing.T) {
 	log.Println("Test Tail running")
 	element := "c"
@@ -74,6 +94,26 @@ func TestTail(t *testing.T) {
 
 	tailValue2, _ := list2.Tail().(string)
 	if tailValue2 != testValueThree {
+		t.Fail()
+	}
+}
+
+func TestGetTail(t *testing.T) {
+	log.Println("Test GetTail running")
+
+	list1 := createThreeElementTestList()
+
+	tailValueInteface, err := list1.GetTail()
+	if err != nil {
+		t.Fail()
+	}
+	tailValue, _ := tailValueInteface.(string)
+	if tailValue != testValueThree {
+		t.Fail()
+	}
+
+	newTailValue, _ := list1.Tail().(string)
+	if newTailValue != testValueTwo {
 		t.Fail()
 	}
 }
