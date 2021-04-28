@@ -22,7 +22,8 @@ func TestNewList(t *testing.T) {
 	log.Println("Test NewList running")
 	element := testValueOne
 
-	list := NewList(element)
+	list := NewList()
+	list.Add(element)
 
 	head, _ := list.Head().(string)
 	if head != element {
@@ -50,7 +51,8 @@ func TestHead(t *testing.T) {
 	}
 
 	element := "c"
-	list2 := NewList(element)
+	list2 := NewList()
+	list2.Add(element)
 	headValue2, _ := list2.Head().(string)
 	if headValue2 != element {
 		t.Fail()
@@ -60,7 +62,8 @@ func TestHead(t *testing.T) {
 func TestTail(t *testing.T) {
 	log.Println("Test Tail running")
 	element := "c"
-	list1 := NewList(element)
+	list1 := NewList()
+	list1.Add(element)
 
 	tailValue, _ := list1.Tail().(string)
 	if tailValue != element {
@@ -226,7 +229,8 @@ func TestRemoveByOrderInList(t *testing.T) {
 
 func createThreeElementTestList() *List {
 
-	list := NewList(testValueOne)
+	list := NewList()
+	list.Add(testValueOne)
 
 	list.Add(testValueTwo)
 

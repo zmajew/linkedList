@@ -12,10 +12,9 @@ func (l *List) Size() int64 {
 	return l.list.size()
 }
 
-func NewList(value interface{}) *List {
-	element := newElement(value)
+func NewList() *List {
 	return &List{
-		list: newList(element),
+		list: newList(),
 	}
 }
 
@@ -36,8 +35,7 @@ func (l *List) Tail() interface{} {
 func (l *List) Add(value interface{}) {
 	element := newElement(value)
 	if l.list == nil {
-		l.list = newList(element)
-		return
+		l.list = newList()
 	}
 	l.list.add(element)
 }
@@ -82,11 +80,8 @@ type list struct {
 	mu           sync.Mutex
 }
 
-func newList(element *element) *list {
-	return &list{
-		FirstElement: element,
-		LastElement:  element,
-	}
+func newList() *list {
+	return &list{}
 }
 
 func (l *list) listIsEmpty() bool {
